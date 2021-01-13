@@ -6,8 +6,8 @@
         "repositoryURL": "https://github.com/dunesailer/Aesthete.git",
         "state": {
           "branch": null,
-          "revision": "dbb5995b095fb73d91d693c49389bc25ee7dbe95",
-          "version": "0.5.0"
+          "revision": "5fbb7c6e3e1c7f6cebc3f28b1930f6b10bb12a6f",
+          "version": "0.6.1"
         }
       },
       {
@@ -15,8 +15,8 @@
         "repositoryURL": "https://github.com/dunesailer/Greebler.git",
         "state": {
           "branch": null,
-          "revision": "d76a561fde1623d2d1b9716997c38b4688ab21c0",
-          "version": "0.2.1"
+          "revision": "be1d820c9a519ee3b306d0643ed28be5b22961b7",
+          "version": "0.2.2"
         }
       },
       {
@@ -24,8 +24,8 @@
         "repositoryURL": "https://github.com/dunesailer/Utilities.git",
         "state": {
           "branch": null,
-          "revision": "572c8bd507d96d642d21e233224c0b6be655c34e",
-          "version": "1.0.0"
+          "revision": "26280349c9e8d1c1f01d3588f2a7dcabfcac4fd0",
+          "version": "1.0.1"
         }
       }
     ]

@@ -5,15 +5,18 @@ import PackageDescription
 
 let package = Package(
     name: "ShipShape",
+    platforms: [
+        .macOS(.v10_15), .iOS(.v13),
+    ],
     products: [
         .library(
             name: "ShipShape",
             targets: ["ShipShape"]),
     ],
     dependencies: [
-        .package(name: "Dunesailer Utilities", url: "https://github.com/dunesailer/Utilities.git", from: "1.0.0"),
-        .package(name: "Aesthete", url: "https://github.com/dunesailer/Aesthete.git", from: "0.5.0"),
-        .package(name: "Greebler", url: "https://github.com/dunesailer/Greebler.git", from: "0.2.1"),
+        .package(name: "Dunesailer Utilities", url: "https://github.com/dunesailer/Utilities.git", from: "1.0.1"),
+        .package(name: "Aesthete", url: "https://github.com/dunesailer/Aesthete.git", from: "0.6.1"),
+        .package(name: "Greebler", url: "https://github.com/dunesailer/Greebler.git", from: "0.2.2"),
     ],
     targets: [
         .target(
