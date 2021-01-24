@@ -33,9 +33,9 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         for _ in 1...complexity {
 
             let verticalOffset = CGFloat.random(in: 0.0...yUnits)
-            let horizontalOffset = CGFloat.random(in: (xUnits * 0.1)...(xUnits * 0.2))
+            let horizontalOffset = CGFloat.random(in: (xUnits * 0.05)...(xUnits * 0.1))
 
-            let destinationPoint = CGPoint(x: currentPoint.x + horizontalOffset, y: verticalOffset)
+            var destinationPoint = CGPoint(x: currentPoint.x + horizontalOffset, y: verticalOffset)
 
             // Connector
             switch SideViewSpaceShipShape.connectorProbabilities.randomItem() {
@@ -55,9 +55,11 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
 
             // Horizontal
             let length = CGFloat.random(in: (xUnits * 0.1)...(xUnits * 0.3))
-            let horizontalPathlet: Pathlet = .line(to: (currentPoint.x + length > xUnits)
-                                                    ? CGPoint(x: xUnits, y: currentPoint.y)
-                                                    : CGPoint(x: currentPoint.x + length, y: currentPoint.y))
+            let destinationX = (currentPoint.x + length > xUnits) ? xUnits : currentPoint.x + length
+            destinationPoint = CGPoint(x: destinationX, y: currentPoint.y)
+            let horizontalPathlet: Pathlet = .line(to: destinationPoint)
+
+            currentPoint = destinationPoint
 
             pathlets.append(horizontalPathlet)
         }
@@ -70,7 +72,7 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         context.saveGState()
         context.setAllowsAntialiasing(true)
 
-        context.addPath(path.createCGPath())
+        context.addPath(path.createCGPath(usingRelativePositioning: false))
         context.strokePath()
 
         context.restoreGState()
