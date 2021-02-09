@@ -3,6 +3,7 @@
 import CoreGraphics
 import DunesailerUtilities
 import Aesthete
+import Greebler
 
 public struct SideViewSpaceShipShape: ShipShape, Codable {
 
@@ -12,14 +13,23 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         case concaveCurve
     }
 
+    private enum EdgeType {
+        case top
+        case bottom
+    }
+
     private static let connectorProbabilities = ProbabilityGroup<ConnectorType>([
         .line           :   50,
         .convexCurve    :   25,
         .concaveCurve   :   25
     ], enforcePercent: true)
 
+    private let topEdgePath: CompositePath
+    private let bottomEdgePath: CompositePath
     private let path: CompositePath
-    
+    private let xUnits: CGFloat
+    private let yUnits: CGFloat
+
     public init(xUnits: CGFloat = 1,
                 yUnits: CGFloat = 1,
                 complexity: Int) {
@@ -28,6 +38,43 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
             fatalError("complexity must be greater than 0")
         }
 
+        self.xUnits = xUnits
+        self.yUnits = yUnits
+
+        topEdgePath = SideViewSpaceShipShape.design(.top, xUnits: xUnits, yUnits: yUnits, complexity: complexity)
+        bottomEdgePath = SideViewSpaceShipShape.design(.bottom, xUnits: xUnits, yUnits: yUnits, complexity: complexity)
+
+        path = CompositePath(pathlets: topEdgePath.pathlets + [.move(to: .zero)] + bottomEdgePath.pathlets)
+    }
+
+    public func draw(on context: CGContext) {
+        context.saveGState()
+        context.setAllowsAntialiasing(true)
+
+        let shipShapePath = path.createCGPath(usingRelativePositioning: false)
+
+        context.addPath(shipShapePath)
+        context.clip()
+
+        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
+        context.setFillColor(grayThemeColor)
+        context.addPath(shipShapePath)
+        context.fillPath()
+
+        context.resetClip()
+        context.addPath(shipShapePath)
+        context.strokePath()
+
+        context.restoreGState()
+    }
+
+    static private func design(_ edge: EdgeType,
+                               xUnits: CGFloat,
+                               yUnits: CGFloat,
+                               complexity: Int) -> CompositePath {
+
+        let verticalOffsetRange = edge == .top ? (0.1...yUnits) : ((-0.66*yUnits)...(-0.1))
+
         let minimumConnectorOffset: CGFloat = (0.3 / CGFloat(complexity+1)) * xUnits
         let maximumConnectorOffset: CGFloat = (0.6 / CGFloat(complexity+1)) * xUnits
 
@@ -35,7 +82,7 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         var currentPoint = CGPoint.zero
         for _ in 1...complexity {
 
-            let verticalOffset = CGFloat.random(in: 0.1...yUnits)
+            let verticalOffset = CGFloat.random(in: verticalOffsetRange)
             let horizontalOffset = CGFloat.random(in: minimumConnectorOffset...maximumConnectorOffset)
 
             var destinationPoint = CGPoint(x: currentPoint.x + horizontalOffset, y: verticalOffset)
@@ -85,17 +132,7 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
             pathlets.append(.quadCurve(to: endPoint, control: controlPoint))
         }
 
-        path = .init(pathlets: pathlets)
-    }
-
-    public func draw(on context: CGContext) {
-        context.saveGState()
-        context.setAllowsAntialiasing(true)
-
-        context.addPath(path.createCGPath(usingRelativePositioning: false))
-        context.strokePath()
-
-        context.restoreGState()
+        return .init(pathlets: pathlets)
     }
 
 }
