@@ -49,21 +49,83 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
 
     public func draw(on context: CGContext) {
         context.saveGState()
-        context.setAllowsAntialiasing(true)
 
         let shipShapePath = path.createCGPath(usingRelativePositioning: false)
 
         context.addPath(shipShapePath)
         context.clip()
 
-        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1)
-        context.setFillColor(grayThemeColor)
-        context.addPath(shipShapePath)
-        context.fillPath()
+        drawTopHalf(on: context)
+        drawBottomHalf(on: context)
+        drawDividingLine(on: context)
+        drawTrench(on: context)
 
         context.resetClip()
+
+        context.setAllowsAntialiasing(true)
         context.addPath(shipShapePath)
         context.strokePath()
+
+        context.restoreGState()
+    }
+
+    private func drawTopHalf(on context: CGContext) {
+        context.saveGState()
+
+        context.clip(to: CGRect(x: 0, y: 0, width: xUnits, height: yUnits))
+
+        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor
+        let windowZoneCount = 3
+        let greebles = CompositeGreebles(greeblesAssortment: [
+            CapitalShipSurfaceGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor),
+            CapitalShipWindowsGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor, windowZoneCount: windowZoneCount)
+        ])
+        greebles.draw(on: context)
+
+        context.restoreGState()
+    }
+
+    private func drawBottomHalf(on context: CGContext) {
+        context.saveGState()
+
+        context.clip(to: CGRect(x: 0, y: -yUnits, width: xUnits, height: yUnits))
+
+        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor.brightnessAdjusted(by: -0.1)
+        let windowZoneCount = 3
+        let greebles = CompositeGreebles(greeblesAssortment: [
+            CapitalShipSurfaceGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor),
+            CapitalShipWindowsGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor, windowZoneCount: windowZoneCount)
+        ])
+        context.translateBy(x: 0, y: -yUnits)
+        greebles.draw(on: context)
+
+        context.restoreGState()
+    }
+
+    private func drawDividingLine(on context: CGContext) {
+        context.saveGState()
+
+        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor.brightnessAdjusted(by: -0.2)
+
+        context.move(to: .zero)
+        context.addLine(to: CGPoint(x: xUnits, y: 0))
+        context.setStrokeColor(CGColor.create(from: grayThemeColor))
+        context.strokePath()
+
+        context.restoreGState()
+    }
+
+    private func drawTrench(on context: CGContext) {
+        context.saveGState()
+
+        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor.brightnessAdjusted(by: -0.1)
+        let trenchYPosition = CGFloat.random(in: 0...yUnits / 2)
+        let greebles = EquipmentTrenchGreebles(xUnits: xUnits,
+                                               yUnits: yUnits,
+                                               themeColor: grayThemeColor,
+                                               trenchYPosition: trenchYPosition)
+        context.translateBy(x: 0, y: -yUnits / 2)
+        greebles.draw(on: context)
 
         context.restoreGState()
     }
