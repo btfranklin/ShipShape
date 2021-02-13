@@ -13,7 +13,6 @@ func createGraphicsContext() -> CGContext {
                                   bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue) else {
         fatalError("Could not create graphics context")
     }
-    context.setLineWidth(0.01)
     context.translateBy(x: 0, y: 100 )
     context.scaleBy(x: 100, y: 100)
     return context

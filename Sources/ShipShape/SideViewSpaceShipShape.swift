@@ -49,6 +49,7 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
 
     public func draw(on context: CGContext) {
         context.saveGState()
+        context.setAllowsAntialiasing(true)
 
         let shipShapePath = path.createCGPath(usingRelativePositioning: false)
 
@@ -62,8 +63,9 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
 
         context.resetClip()
 
-        context.setAllowsAntialiasing(true)
         context.addPath(shipShapePath)
+        
+        context.setLineWidth(0.005)
         context.strokePath()
 
         context.restoreGState()
@@ -110,6 +112,7 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         context.move(to: .zero)
         context.addLine(to: CGPoint(x: xUnits, y: 0))
         context.setStrokeColor(CGColor.create(from: grayThemeColor))
+        context.setLineWidth(0.02)
         context.strokePath()
 
         context.restoreGState()
