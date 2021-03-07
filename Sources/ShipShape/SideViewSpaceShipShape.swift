@@ -3,9 +3,8 @@
 import CoreGraphics
 import DunesailerUtilities
 import Aesthete
-import Greebler
 
-public struct SideViewSpaceShipShape: ShipShape, Codable {
+public struct SideViewSpaceShipShape: Codable {
 
     private enum ConnectorType: String, Codable {
         case line
@@ -24,11 +23,11 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         .concaveCurve   :   25
     ], enforcePercent: true)
 
-    private let topEdgePath: CompositePath
-    private let bottomEdgePath: CompositePath
-    private let path: CompositePath
-    private let xUnits: CGFloat
-    private let yUnits: CGFloat
+    public let topEdgePath: CompositePath
+    public let bottomEdgePath: CompositePath
+    public let path: CompositePath
+    public let xUnits: CGFloat
+    public let yUnits: CGFloat
 
     public init(xUnits: CGFloat = 1,
                 yUnits: CGFloat = 1,
@@ -45,92 +44,6 @@ public struct SideViewSpaceShipShape: ShipShape, Codable {
         bottomEdgePath = SideViewSpaceShipShape.design(.bottom, xUnits: xUnits, yUnits: yUnits, complexity: complexity)
 
         path = CompositePath(pathlets: topEdgePath.pathlets + [.move(to: .zero)] + bottomEdgePath.pathlets)
-    }
-
-    public func draw(on context: CGContext) {
-        context.saveGState()
-        context.setAllowsAntialiasing(true)
-
-        let shipShapePath = path.createCGPath(usingRelativePositioning: false)
-
-        context.addPath(shipShapePath)
-        context.clip()
-
-        drawTopHalf(on: context)
-        drawBottomHalf(on: context)
-        drawDividingLine(on: context)
-        drawTrench(on: context)
-
-        context.resetClip()
-
-        context.addPath(shipShapePath)
-        
-        context.setLineWidth(0.005)
-        context.strokePath()
-
-        context.restoreGState()
-    }
-
-    private func drawTopHalf(on context: CGContext) {
-        context.saveGState()
-
-        context.clip(to: CGRect(x: 0, y: 0, width: xUnits, height: yUnits))
-
-        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor
-        let windowZoneCount = 3
-        let greebles = CompositeGreebles(greeblesAssortment: [
-            CapitalShipSurfaceGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor),
-            CapitalShipWindowsGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor, windowZoneCount: windowZoneCount)
-        ])
-        greebles.draw(on: context)
-
-        context.restoreGState()
-    }
-
-    private func drawBottomHalf(on context: CGContext) {
-        context.saveGState()
-
-        context.clip(to: CGRect(x: 0, y: -yUnits, width: xUnits, height: yUnits))
-
-        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor.brightnessAdjusted(by: -0.1)
-        let windowZoneCount = 3
-        let greebles = CompositeGreebles(greeblesAssortment: [
-            CapitalShipSurfaceGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor),
-            CapitalShipWindowsGreebles(xUnits: xUnits, yUnits: yUnits, themeColor: grayThemeColor, windowZoneCount: windowZoneCount)
-        ])
-        context.translateBy(x: 0, y: -yUnits)
-        greebles.draw(on: context)
-
-        context.restoreGState()
-    }
-
-    private func drawDividingLine(on context: CGContext) {
-        context.saveGState()
-
-        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor.brightnessAdjusted(by: -0.2)
-
-        context.move(to: .zero)
-        context.addLine(to: CGPoint(x: xUnits, y: 0))
-        context.setStrokeColor(CGColor.create(from: grayThemeColor))
-        context.setLineWidth(0.02)
-        context.strokePath()
-
-        context.restoreGState()
-    }
-
-    private func drawTrench(on context: CGContext) {
-        context.saveGState()
-
-        let grayThemeColor = CGColor(red: 0.5, green: 0.5, blue: 0.5, alpha: 1).hsbaColor.brightnessAdjusted(by: -0.1)
-        let trenchYPosition = CGFloat.random(in: 0...yUnits / 2)
-        let greebles = EquipmentTrenchGreebles(xUnits: xUnits,
-                                               yUnits: yUnits,
-                                               themeColor: grayThemeColor,
-                                               trenchYPosition: trenchYPosition)
-        context.translateBy(x: 0, y: -yUnits / 2)
-        greebles.draw(on: context)
-
-        context.restoreGState()
     }
 
     static private func design(_ edge: EdgeType,
