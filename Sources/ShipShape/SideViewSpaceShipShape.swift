@@ -23,8 +23,20 @@ public struct SideViewSpaceShipShape: Codable {
         .concaveCurve   :   25
     ], enforcePercent: true)
 
+    public struct Platform: Codable {
+        public let startPoint: CGPoint
+        public let width: CGFloat
+
+        init(startPoint: CGPoint, width: CGFloat) {
+            self.startPoint = startPoint
+            self.width = width
+        }
+    }
+
     public let topEdgePath: CompositePath
+    public let topPlatforms: [Platform]
     public let bottomEdgePath: CompositePath
+    public let bottomPlatforms: [Platform]
     public let path: CompositePath
     public let xUnits: CGFloat
     public let yUnits: CGFloat
@@ -40,8 +52,13 @@ public struct SideViewSpaceShipShape: Codable {
         self.xUnits = xUnits
         self.yUnits = yUnits
 
-        topEdgePath = SideViewSpaceShipShape.design(.top, xUnits: xUnits, yUnits: yUnits, complexity: complexity)
-        bottomEdgePath = SideViewSpaceShipShape.design(.bottom, xUnits: xUnits, yUnits: yUnits, complexity: complexity)
+        var topPlatforms = [Platform]()
+        topEdgePath = SideViewSpaceShipShape.design(.top, xUnits: xUnits, yUnits: yUnits, complexity: complexity, platforms: &topPlatforms)
+        self.topPlatforms = topPlatforms
+
+        var bottomPlatforms = [Platform]()
+        bottomEdgePath = SideViewSpaceShipShape.design(.bottom, xUnits: xUnits, yUnits: yUnits, complexity: complexity, platforms: &bottomPlatforms)
+        self.bottomPlatforms = bottomPlatforms
 
         path = CompositePath(pathlets: topEdgePath.pathlets + [.move(to: .zero)] + bottomEdgePath.pathlets)
     }
@@ -49,7 +66,8 @@ public struct SideViewSpaceShipShape: Codable {
     static private func design(_ edge: EdgeType,
                                xUnits: CGFloat,
                                yUnits: CGFloat,
-                               complexity: Int) -> CompositePath {
+                               complexity: Int,
+                               platforms: inout [Platform]) -> CompositePath {
 
         let verticalOffsetRange = edge == .top ? (0.1...yUnits) : ((-0.66*yUnits)...(-0.1))
 
@@ -81,7 +99,7 @@ public struct SideViewSpaceShipShape: Codable {
 
             currentPoint = destinationPoint
 
-            // Horizontal
+            // Horizontal Platform
             let minimumHorizontalLength: CGFloat = (0.75 / CGFloat(complexity)) * (xUnits - currentPoint.x)
             let maximumHorizontalLength: CGFloat = (0.95 / CGFloat(complexity)) * (xUnits - currentPoint.x)
 
@@ -89,6 +107,8 @@ public struct SideViewSpaceShipShape: Codable {
             let destinationX = (currentPoint.x + length > xUnits) ? xUnits : currentPoint.x + length
             destinationPoint = CGPoint(x: destinationX, y: currentPoint.y)
             let horizontalPathlet: Pathlet = .line(to: destinationPoint)
+
+            platforms.append(Platform(startPoint: currentPoint, width: length))
 
             currentPoint = destinationPoint
 
