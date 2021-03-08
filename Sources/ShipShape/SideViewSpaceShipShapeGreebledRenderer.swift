@@ -1,20 +1,51 @@
 //  Created by B.T. Franklin on 2/22/21.
 
 import Foundation
+import CoreGraphics
 import Aesthete
 import Greebler
 
-public class SideViewSpaceShipShapeRenderer {
+public class SideViewSpaceShipShapeGreebledRenderer {
 
-    let themeColor: HSBAColor
+    public let themeColor: HSBAColor
+    public let allowsAntialiasing: Bool
+    public let lineWidth: CGFloat
+    public let drawsDividingLine: Bool
+    public let dividingLineWidth: CGFloat
+    public let drawsTrench: Bool
+    public let trenchThemeColor: HSBAColor
+    public let topHalfWindowZoneCount: Int
+    public let bottomHalfWindowZoneCount: Int
 
-    public init(themeColor: HSBAColor) {
+    public init(themeColor: HSBAColor = CGColor(#colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)).hsbaColor,
+                allowsAntialiasing: Bool = true,
+                lineWidth: CGFloat = 0.005,
+                drawsDividingLine: Bool = true,
+                dividingLineWidth: CGFloat = 0.02,
+                drawsTrench: Bool = true,
+                trenchThemeColor: HSBAColor? = nil,
+                topHalfWindowZoneCount: Int = 3,
+                bottomHalfWindowZoneCount: Int = 3) {
         self.themeColor = themeColor
+        self.allowsAntialiasing = allowsAntialiasing
+        self.lineWidth = lineWidth
+        self.drawsDividingLine = drawsDividingLine
+        self.dividingLineWidth = dividingLineWidth
+        self.drawsTrench = drawsTrench
+
+        if let trenchThemeColor = trenchThemeColor {
+            self.trenchThemeColor = trenchThemeColor
+        } else {
+            self.trenchThemeColor = themeColor.brightnessAdjusted(by: -0.1)
+        }
+
+        self.topHalfWindowZoneCount = topHalfWindowZoneCount
+        self.bottomHalfWindowZoneCount = bottomHalfWindowZoneCount
     }
 
     public func render(_ shipShape: SideViewSpaceShipShape, on context: CGContext) {
         context.saveGState()
-        context.setAllowsAntialiasing(true)
+        context.setAllowsAntialiasing(allowsAntialiasing)
 
         let shipShapePath = shipShape.path.createCGPath(usingRelativePositioning: false)
 
@@ -23,14 +54,18 @@ public class SideViewSpaceShipShapeRenderer {
 
         drawTopHalf(of: shipShape, on: context)
         drawBottomHalf(of: shipShape, on: context)
-        drawDividingLine(across: shipShape, on: context)
-        drawTrench(across: shipShape, on: context)
+        if drawsDividingLine {
+            drawDividingLine(across: shipShape, on: context)
+        }
+        if drawsTrench {
+            drawTrench(across: shipShape, on: context)
+        }
 
         context.resetClip()
 
         context.addPath(shipShapePath)
 
-        context.setLineWidth(0.005)
+        context.setLineWidth(lineWidth)
         context.strokePath()
 
         context.restoreGState()
@@ -40,11 +75,9 @@ public class SideViewSpaceShipShapeRenderer {
         context.saveGState()
 
         context.clip(to: CGRect(x: 0, y: 0, width: shipShape.xUnits, height: shipShape.yUnits))
-
-        let windowZoneCount = 3
         let greebles = CompositeGreebles(greeblesAssortment: [
             CapitalShipSurfaceGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: themeColor),
-            CapitalShipWindowsGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: themeColor, windowZoneCount: windowZoneCount)
+            CapitalShipWindowsGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: themeColor, windowZoneCount: topHalfWindowZoneCount)
         ])
         greebles.draw(on: context)
 
@@ -57,10 +90,9 @@ public class SideViewSpaceShipShapeRenderer {
         context.clip(to: CGRect(x: 0, y: -shipShape.yUnits, width: shipShape.xUnits, height: shipShape.yUnits))
 
         let darkenedThemeColor = themeColor.brightnessAdjusted(by: -0.1)
-        let windowZoneCount = 3
         let greebles = CompositeGreebles(greeblesAssortment: [
             CapitalShipSurfaceGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: darkenedThemeColor),
-            CapitalShipWindowsGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: darkenedThemeColor, windowZoneCount: windowZoneCount)
+            CapitalShipWindowsGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: darkenedThemeColor, windowZoneCount: bottomHalfWindowZoneCount)
         ])
         context.translateBy(x: 0, y: -shipShape.yUnits)
         greebles.draw(on: context)
@@ -76,7 +108,7 @@ public class SideViewSpaceShipShapeRenderer {
         context.move(to: .zero)
         context.addLine(to: CGPoint(x: shipShape.xUnits, y: 0))
         context.setStrokeColor(CGColor.create(from: darkenedThemeColor))
-        context.setLineWidth(0.02)
+        context.setLineWidth(dividingLineWidth)
         context.strokePath()
 
         context.restoreGState()
@@ -85,17 +117,15 @@ public class SideViewSpaceShipShapeRenderer {
     private func drawTrench(across shipShape: SideViewSpaceShipShape, on context: CGContext) {
         context.saveGState()
 
-        let darkenedThemeColor = themeColor.brightnessAdjusted(by: -0.1)
         let trenchYPosition = CGFloat.random(in: 0...shipShape.yUnits / 2)
         let greebles = EquipmentTrenchGreebles(xUnits: shipShape.xUnits,
                                                yUnits: shipShape.yUnits,
-                                               themeColor: darkenedThemeColor,
+                                               themeColor: trenchThemeColor,
                                                trenchYPosition: trenchYPosition)
         context.translateBy(x: 0, y: -shipShape.yUnits / 2)
         greebles.draw(on: context)
 
         context.restoreGState()
     }
-
 
 }

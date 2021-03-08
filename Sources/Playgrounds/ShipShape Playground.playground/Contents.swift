@@ -19,11 +19,11 @@ func createGraphicsContext() -> CGContext {
 }
 
 var context = createGraphicsContext()
-let grayColor = CGColor(#colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)).hsbaColor
-let renderer = SideViewSpaceShipShapeRenderer(themeColor: grayColor)
+let themeColor = CGColor(#colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)).hsbaColor
+let renderer = SideViewSpaceShipShapeGreebledRenderer(themeColor: themeColor)
 
 let sideViewShipShape = SideViewSpaceShipShape(xUnits: 8, complexity: 7)
 
-
+context = createGraphicsContext()
 renderer.render(sideViewShipShape, on: context)
 context.makeImage()! // Click "Show Result" or "Quick Look" button to view rendered output
