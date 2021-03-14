@@ -22,7 +22,7 @@ var context = createGraphicsContext()
 let themeColor = CGColor(#colorLiteral(red: 0.1764705926, green: 0.4980392158, blue: 0.7568627596, alpha: 1)).hsbaColor
 let renderer = SideViewSpaceShipShapeGreebledRenderer(themeColor: themeColor)
 
-let sideViewShipShape = SideViewSpaceShipShape(xUnits: 8, complexity: 7)
+let sideViewShipShape = SideViewSpaceShipShape(size: .init(width: 8, height: 1), complexity: 7)
 
 context = createGraphicsContext()
 renderer.render(sideViewShipShape, on: context)

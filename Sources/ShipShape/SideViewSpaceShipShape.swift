@@ -38,41 +38,37 @@ public struct SideViewSpaceShipShape: Codable {
     public let bottomEdgePath: CompositePath
     public let bottomPlatforms: [Platform]
     public let path: CompositePath
-    public let xUnits: CGFloat
-    public let yUnits: CGFloat
+    public let size: CGSize
 
-    public init(xUnits: CGFloat = 1,
-                yUnits: CGFloat = 1,
+    public init(size: CGSize = .init(width: 1.0, height: 1.0),
                 complexity: Int) {
 
         guard complexity > 0 else {
             fatalError("complexity must be greater than 0")
         }
 
-        self.xUnits = xUnits
-        self.yUnits = yUnits
+        self.size = size
 
         var topPlatforms = [Platform]()
-        topEdgePath = SideViewSpaceShipShape.design(.top, xUnits: xUnits, yUnits: yUnits, complexity: complexity, platforms: &topPlatforms)
+        topEdgePath = SideViewSpaceShipShape.design(.top, size: size, complexity: complexity, platforms: &topPlatforms)
         self.topPlatforms = topPlatforms
 
         var bottomPlatforms = [Platform]()
-        bottomEdgePath = SideViewSpaceShipShape.design(.bottom, xUnits: xUnits, yUnits: yUnits, complexity: complexity, platforms: &bottomPlatforms)
+        bottomEdgePath = SideViewSpaceShipShape.design(.bottom, size: size, complexity: complexity, platforms: &bottomPlatforms)
         self.bottomPlatforms = bottomPlatforms
 
         path = CompositePath(pathlets: topEdgePath.pathlets + [.move(to: .zero)] + bottomEdgePath.pathlets)
     }
 
     static private func design(_ edge: EdgeType,
-                               xUnits: CGFloat,
-                               yUnits: CGFloat,
+                               size: CGSize,
                                complexity: Int,
                                platforms: inout [Platform]) -> CompositePath {
 
-        let verticalOffsetRange = edge == .top ? (0.1...yUnits) : ((-0.66*yUnits)...(-0.1))
+        let verticalOffsetRange = edge == .top ? (0.1...size.height) : ((-0.66*size.height)...(-0.1))
 
-        let minimumConnectorOffset: CGFloat = (0.3 / CGFloat(complexity+1)) * xUnits
-        let maximumConnectorOffset: CGFloat = (0.6 / CGFloat(complexity+1)) * xUnits
+        let minimumConnectorOffset: CGFloat = (0.3 / CGFloat(complexity+1)) * size.width
+        let maximumConnectorOffset: CGFloat = (0.6 / CGFloat(complexity+1)) * size.width
 
         var pathlets = [Pathlet]()
         var currentPoint = CGPoint.zero
@@ -100,11 +96,11 @@ public struct SideViewSpaceShipShape: Codable {
             currentPoint = destinationPoint
 
             // Horizontal Platform
-            let minimumHorizontalLength: CGFloat = (0.75 / CGFloat(complexity)) * (xUnits - currentPoint.x)
-            let maximumHorizontalLength: CGFloat = (0.95 / CGFloat(complexity)) * (xUnits - currentPoint.x)
+            let minimumHorizontalLength: CGFloat = (0.75 / CGFloat(complexity)) * (size.width - currentPoint.x)
+            let maximumHorizontalLength: CGFloat = (0.95 / CGFloat(complexity)) * (size.width - currentPoint.x)
 
             let length = CGFloat.random(in: minimumHorizontalLength...maximumHorizontalLength)
-            let destinationX = (currentPoint.x + length > xUnits) ? xUnits : currentPoint.x + length
+            let destinationX = (currentPoint.x + length > size.width) ? size.width : currentPoint.x + length
             destinationPoint = CGPoint(x: destinationX, y: currentPoint.y)
             let horizontalPathlet: Pathlet = .line(to: destinationPoint)
 
@@ -116,7 +112,7 @@ public struct SideViewSpaceShipShape: Codable {
         }
 
         // Final connector
-        let endPoint = CGPoint(x: xUnits, y: 0.0)
+        let endPoint = CGPoint(x: size.width, y: 0.0)
         switch SideViewSpaceShipShape.connectorProbabilities.randomItem() {
         case .line:
             pathlets.append(.line(to: endPoint))

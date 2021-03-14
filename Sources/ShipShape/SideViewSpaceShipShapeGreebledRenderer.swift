@@ -74,10 +74,10 @@ public class SideViewSpaceShipShapeGreebledRenderer {
     private func drawTopHalf(of shipShape: SideViewSpaceShipShape, on context: CGContext) {
         context.saveGState()
 
-        context.clip(to: CGRect(x: 0, y: 0, width: shipShape.xUnits, height: shipShape.yUnits))
-        let greebles = CompositeGreebles(greeblesAssortment: [
-            CapitalShipSurfaceGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: themeColor),
-            CapitalShipWindowsGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: themeColor, windowZoneCount: topHalfWindowZoneCount)
+        context.clip(to: CGRect(x: 0, y: 0, width: shipShape.size.width, height: shipShape.size.height))
+        let greebles = CompositeDrawable(drawables: [
+            CapitalShipSurfaceGreebles(xUnits: shipShape.size.width, yUnits: shipShape.size.height, themeColor: themeColor),
+            CapitalShipWindowsGreebles(xUnits: shipShape.size.width, yUnits: shipShape.size.height, themeColor: themeColor, windowZoneCount: topHalfWindowZoneCount)
         ])
         greebles.draw(on: context)
 
@@ -87,14 +87,14 @@ public class SideViewSpaceShipShapeGreebledRenderer {
     private func drawBottomHalf(of shipShape: SideViewSpaceShipShape, on context: CGContext) {
         context.saveGState()
 
-        context.clip(to: CGRect(x: 0, y: -shipShape.yUnits, width: shipShape.xUnits, height: shipShape.yUnits))
+        context.clip(to: CGRect(x: 0, y: -shipShape.size.height, width: shipShape.size.width, height: shipShape.size.height))
 
         let darkenedThemeColor = themeColor.brightnessAdjusted(by: -0.1)
-        let greebles = CompositeGreebles(greeblesAssortment: [
-            CapitalShipSurfaceGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: darkenedThemeColor),
-            CapitalShipWindowsGreebles(xUnits: shipShape.xUnits, yUnits: shipShape.yUnits, themeColor: darkenedThemeColor, windowZoneCount: bottomHalfWindowZoneCount)
+        let greebles = CompositeDrawable(drawables: [
+            CapitalShipSurfaceGreebles(xUnits: shipShape.size.width, yUnits: shipShape.size.height, themeColor: darkenedThemeColor),
+            CapitalShipWindowsGreebles(xUnits: shipShape.size.width, yUnits: shipShape.size.height, themeColor: darkenedThemeColor, windowZoneCount: bottomHalfWindowZoneCount)
         ])
-        context.translateBy(x: 0, y: -shipShape.yUnits)
+        context.translateBy(x: 0, y: -shipShape.size.height)
         greebles.draw(on: context)
 
         context.restoreGState()
@@ -106,7 +106,7 @@ public class SideViewSpaceShipShapeGreebledRenderer {
         let darkenedThemeColor = themeColor.brightnessAdjusted(by: -0.2)
 
         context.move(to: .zero)
-        context.addLine(to: CGPoint(x: shipShape.xUnits, y: 0))
+        context.addLine(to: CGPoint(x: shipShape.size.width, y: 0))
         context.setStrokeColor(CGColor.create(from: darkenedThemeColor))
         context.setLineWidth(dividingLineWidth)
         context.strokePath()
@@ -117,12 +117,12 @@ public class SideViewSpaceShipShapeGreebledRenderer {
     private func drawTrench(across shipShape: SideViewSpaceShipShape, on context: CGContext) {
         context.saveGState()
 
-        let trenchYPosition = CGFloat.random(in: 0...shipShape.yUnits / 2)
-        let greebles = EquipmentTrenchGreebles(xUnits: shipShape.xUnits,
-                                               yUnits: shipShape.yUnits,
+        let trenchYPosition = CGFloat.random(in: 0...shipShape.size.height / 2)
+        let greebles = EquipmentTrenchGreebles(xUnits: shipShape.size.width,
+                                               yUnits: shipShape.size.height,
                                                themeColor: trenchThemeColor,
                                                trenchYPosition: trenchYPosition)
-        context.translateBy(x: 0, y: -shipShape.yUnits / 2)
+        context.translateBy(x: 0, y: -shipShape.size.height / 2)
         greebles.draw(on: context)
 
         context.restoreGState()
