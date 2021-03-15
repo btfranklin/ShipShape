@@ -41,7 +41,8 @@ public struct SideViewSpaceShipShape: Codable {
     public let size: CGSize
 
     public init(size: CGSize = .init(width: 1.0, height: 1.0),
-                complexity: Int) {
+                complexity: Int,
+                allowCurvedConnectors: Bool = true) {
 
         guard complexity > 0 else {
             fatalError("complexity must be greater than 0")
@@ -50,11 +51,19 @@ public struct SideViewSpaceShipShape: Codable {
         self.size = size
 
         var topPlatforms = [Platform]()
-        topEdgePath = SideViewSpaceShipShape.design(.top, size: size, complexity: complexity, platforms: &topPlatforms)
+        topEdgePath = SideViewSpaceShipShape.design(.top,
+                                                    size: size,
+                                                    complexity: complexity,
+                                                    allowCurvedConnectors: allowCurvedConnectors,
+                                                    platforms: &topPlatforms)
         self.topPlatforms = topPlatforms
 
         var bottomPlatforms = [Platform]()
-        bottomEdgePath = SideViewSpaceShipShape.design(.bottom, size: size, complexity: complexity, platforms: &bottomPlatforms)
+        bottomEdgePath = SideViewSpaceShipShape.design(.bottom,
+                                                       size: size,
+                                                       complexity: complexity,
+                                                       allowCurvedConnectors: allowCurvedConnectors,
+                                                       platforms: &bottomPlatforms)
         self.bottomPlatforms = bottomPlatforms
 
         path = CompositePath(pathlets: topEdgePath.pathlets + [.move(to: .zero)] + bottomEdgePath.pathlets)
@@ -63,6 +72,7 @@ public struct SideViewSpaceShipShape: Codable {
     static private func design(_ edge: EdgeType,
                                size: CGSize,
                                complexity: Int,
+                               allowCurvedConnectors: Bool,
                                platforms: inout [Platform]) -> CompositePath {
 
         let verticalOffsetRange = edge == .top ? (0.1...size.height) : ((-0.66*size.height)...(-0.1))
@@ -80,7 +90,8 @@ public struct SideViewSpaceShipShape: Codable {
             var destinationPoint = CGPoint(x: currentPoint.x + horizontalOffset, y: verticalOffset)
 
             // Connector
-            switch SideViewSpaceShipShape.connectorProbabilities.randomItem() {
+            let connector = allowCurvedConnectors ? SideViewSpaceShipShape.connectorProbabilities.randomItem() : .line
+            switch connector {
             case .line:
                 pathlets.append(.line(to: destinationPoint))
 
@@ -113,7 +124,8 @@ public struct SideViewSpaceShipShape: Codable {
 
         // Final connector
         let endPoint = CGPoint(x: size.width, y: 0.0)
-        switch SideViewSpaceShipShape.connectorProbabilities.randomItem() {
+        let connector = allowCurvedConnectors ? SideViewSpaceShipShape.connectorProbabilities.randomItem() : .line
+        switch connector {
         case .line:
             pathlets.append(.line(to: endPoint))
 
