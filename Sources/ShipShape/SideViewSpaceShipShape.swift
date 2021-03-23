@@ -50,7 +50,7 @@ public struct SideViewSpaceShipShape: Codable {
 
         self.size = size
 
-        var topPlatforms = [Platform]()
+        var topPlatforms: [Platform] = []
         topEdgePath = SideViewSpaceShipShape.design(.top,
                                                     size: size,
                                                     complexity: complexity,
@@ -58,7 +58,7 @@ public struct SideViewSpaceShipShape: Codable {
                                                     platforms: &topPlatforms)
         self.topPlatforms = topPlatforms
 
-        var bottomPlatforms = [Platform]()
+        var bottomPlatforms: [Platform] = []
         bottomEdgePath = SideViewSpaceShipShape.design(.bottom,
                                                        size: size,
                                                        complexity: complexity,
@@ -80,7 +80,7 @@ public struct SideViewSpaceShipShape: Codable {
         let minimumConnectorOffset: CGFloat = (0.3 / CGFloat(complexity+1)) * size.width
         let maximumConnectorOffset: CGFloat = (0.6 / CGFloat(complexity+1)) * size.width
 
-        var pathlets = [Pathlet]()
+        var pathlets: [Pathlet] = []
         var currentPoint = CGPoint.zero
         for _ in 1...complexity {
 
