@@ -36,7 +36,7 @@ public class SideViewSpaceShipShapeGreebledRenderer {
         if let trenchThemeColor = trenchThemeColor {
             self.trenchThemeColor = trenchThemeColor
         } else {
-            self.trenchThemeColor = themeColor.brightnessAdjusted(by: -0.1)
+            self.trenchThemeColor = themeColor.withBrightness(adjustedBy: -0.1)
         }
 
         self.topHalfWindowZoneCount = topHalfWindowZoneCount
@@ -47,7 +47,7 @@ public class SideViewSpaceShipShapeGreebledRenderer {
         context.saveGState()
         context.setAllowsAntialiasing(allowsAntialiasing)
 
-        let shipShapePath = shipShape.path.createCGPath(usingRelativePositioning: false)
+        let shipShapePath = shipShape.path.makeCGPath(usingRelativePositioning: false)
 
         context.addPath(shipShapePath)
         context.clip()
@@ -89,7 +89,7 @@ public class SideViewSpaceShipShapeGreebledRenderer {
 
         context.clip(to: CGRect(x: 0, y: -shipShape.size.height, width: shipShape.size.width, height: shipShape.size.height))
 
-        let darkenedThemeColor = themeColor.brightnessAdjusted(by: -0.1)
+        let darkenedThemeColor = themeColor.withBrightness(adjustedBy: -0.1)
         let greebles = CompositeDrawable(drawables: [
             CapitalShipSurfaceGreebles(xUnits: shipShape.size.width, yUnits: shipShape.size.height, themeColor: darkenedThemeColor),
             CapitalShipWindowsGreebles(xUnits: shipShape.size.width, yUnits: shipShape.size.height, themeColor: darkenedThemeColor, windowZoneCount: bottomHalfWindowZoneCount)
@@ -103,11 +103,11 @@ public class SideViewSpaceShipShapeGreebledRenderer {
     private func drawDividingLine(across shipShape: SideViewSpaceShipShape, on context: CGContext) {
         context.saveGState()
 
-        let darkenedThemeColor = themeColor.brightnessAdjusted(by: -0.2)
+        let darkenedThemeColor = themeColor.withBrightness(adjustedBy: -0.2)
 
         context.move(to: .zero)
         context.addLine(to: CGPoint(x: shipShape.size.width, y: 0))
-        context.setStrokeColor(CGColor.create(from: darkenedThemeColor))
+        context.setStrokeColor(CGColor.make(hsbaColor: darkenedThemeColor))
         context.setLineWidth(dividingLineWidth)
         context.strokePath()
 

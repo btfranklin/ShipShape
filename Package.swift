@@ -14,9 +14,9 @@ let package = Package(
             targets: ["ShipShape"]),
     ],
     dependencies: [
-        .package(name: "Dunesailer Utilities", url: "https://github.com/dunesailer/Utilities.git", from: "1.0.1"),
-        .package(name: "Aesthete", url: "https://github.com/dunesailer/Aesthete.git", from: "0.8.0"),
-        .package(name: "Greebler", url: "https://github.com/dunesailer/Greebler.git", from: "0.4.0"),
+        .package(name: "Dunesailer Utilities", url: "https://github.com/dunesailer/Utilities.git", from: "2.0.2"),
+        .package(name: "Aesthete", url: "https://github.com/dunesailer/Aesthete.git", from: "0.9.0"),
+        .package(name: "Greebler", url: "https://github.com/dunesailer/Greebler.git", from: "0.5.0"),
     ],
     targets: [
         .target(
