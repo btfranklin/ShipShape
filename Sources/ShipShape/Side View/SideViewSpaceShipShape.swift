@@ -1,7 +1,7 @@
 //  Created by B.T. Franklin on 1/4/21.
 
 import CoreGraphics
-import DunesailerUtilities
+import ControlledChaos
 import Aesthete
 
 public struct SideViewSpaceShipShape: Codable {

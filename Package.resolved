@@ -3,29 +3,29 @@
     "pins": [
       {
         "package": "Aesthete",
-        "repositoryURL": "https://github.com/dunesailer/Aesthete.git",
+        "repositoryURL": "https://github.com/btfranklin/Aesthete.git",
         "state": {
           "branch": null,
-          "revision": "95d79c0cdd2fbe65b2999f8f00ece3d061879195",
-          "version": "0.9.0"
+          "revision": "083e17ef814a78f2c55e577d4ff884db8edba73f",
+          "version": "1.5.1"
+        }
+      },
+      {
+        "package": "ControlledChaos",
+        "repositoryURL": "https://github.com/btfranklin/ControlledChaos",
+        "state": {
+          "branch": null,
+          "revision": "4b5476d112f2d92f76579e021210073cd9060e14",
+          "version": "1.1.1"
         }
       },
       {
         "package": "Greebler",
-        "repositoryURL": "https://github.com/dunesailer/Greebler.git",
+        "repositoryURL": "https://github.com/btfranklin/Greebler.git",
         "state": {
           "branch": null,
-          "revision": "af9dd19a4dbb65946b3f409874761ca890c5e4e1",
-          "version": "0.5.0"
-        }
-      },
-      {
-        "package": "Dunesailer Utilities",
-        "repositoryURL": "https://github.com/dunesailer/Utilities.git",
-        "state": {
-          "branch": null,
-          "revision": "c7247b9efc4c01cb4a8d90d302c26cb504df6574",
-          "version": "2.0.2"
+          "revision": "f8c2680a1f0ae3868a625dc03eb0bae329289778",
+          "version": "0.7.0"
         }
       }
     ]

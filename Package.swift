@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "ShipShape",
     platforms: [
-        .macOS(.v10_15), .iOS(.v13),
+        .macOS(.v11), .iOS(.v13),
     ],
     products: [
         .library(
@@ -14,16 +14,24 @@ let package = Package(
             targets: ["ShipShape"]),
     ],
     dependencies: [
-        .package(name: "Dunesailer Utilities", url: "https://github.com/dunesailer/Utilities.git", from: "2.0.2"),
-        .package(name: "Aesthete", url: "https://github.com/dunesailer/Aesthete.git", from: "0.9.0"),
-        .package(name: "Greebler", url: "https://github.com/dunesailer/Greebler.git", from: "0.5.0"),
+        .package(url: "https://github.com/btfranklin/ControlledChaos",
+                 from: "1.1.1"),
+        .package(name: "Aesthete",
+                 url: "https://github.com/btfranklin/Aesthete.git",
+                 from: "1.5.1"),
+        .package(name: "Greebler",
+                 url: "https://github.com/btfranklin/Greebler.git",
+                 from: "0.7.0"),
     ],
     targets: [
         .target(
             name: "ShipShape",
-            dependencies: [.product(name: "DunesailerUtilities", package: "Dunesailer Utilities"),
-                           .product(name: "Aesthete", package: "Aesthete"),
-                           .product(name: "Greebler", package: "Greebler")
+            dependencies: [.product(name: "ControlledChaos",
+                                    package: "ControlledChaos"),
+                           .product(name: "Aesthete",
+                                    package: "Aesthete"),
+                           .product(name: "Greebler",
+                                    package: "Greebler")
             ]),
         .testTarget(
             name: "ShipShapeTests",
