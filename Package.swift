@@ -15,13 +15,13 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/btfranklin/ControlledChaos",
-                 from: "1.1.1"),
+                 from: "1.3.2"),
         .package(name: "Aesthete",
                  url: "https://github.com/btfranklin/Aesthete.git",
-                 from: "1.5.1"),
+                 from: "1.6.1"),
         .package(name: "Greebler",
                  url: "https://github.com/btfranklin/Greebler.git",
-                 from: "0.7.0"),
+                 from: "0.8.0"),
     ],
     targets: [
         .target(
