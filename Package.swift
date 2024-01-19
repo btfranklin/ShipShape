@@ -33,8 +33,5 @@ let package = Package(
                            .product(name: "Greebler",
                                     package: "Greebler")
             ]),
-        .testTarget(
-            name: "ShipShapeTests",
-            dependencies: ["ShipShape"]),
     ]
 )
